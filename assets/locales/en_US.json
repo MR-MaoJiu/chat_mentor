@@ -1,0 +1,9 @@
+{
+  "buttons": {
+    "login": "Login",
+    "sign_in": "Sign-in",
+    "logout": "Logout",
+    "send": "Send"
+
+  }
+}
