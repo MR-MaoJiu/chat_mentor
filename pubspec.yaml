@@ -9,6 +9,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   get: 4.6.5
   dio: ^5.0.1
+  chat_bubbles: ^1.4.1
   flutter: 
     sdk: flutter
 

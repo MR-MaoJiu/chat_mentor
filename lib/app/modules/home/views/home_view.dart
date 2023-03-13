@@ -8,61 +8,52 @@ class HomeView extends GetView<HomeController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Chat Mentor'),
-        centerTitle: true,
-      ),
-      body: Obx(() => Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              children: <Widget>[
-                Expanded(
-                  child: Container(
-                    color: Colors.grey.shade100,
-                    child: ListView.builder(
-                      reverse: true,
-                      itemCount: controller.messages.value.length,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          decoration: BoxDecoration(
-                              border: Border.all(color: Colors.black)),
-                          child: Text(controller.messages.value[index]),
-                        );
+    return Obx(() => Scaffold(
+          appBar: AppBar(
+            title: const Text('Chat Mentor'),
+            centerTitle: true,
+          ),
+          bottomSheet: SafeArea(
+            child: Container(
+              padding: const EdgeInsets.all(5),
+              alignment: Alignment.bottomLeft,
+              height: 60,
+              // color: Colors.blue,
+              child: Row(children: [
+                SizedBox(
+                    width: 300,
+                    child: TextField(
+                      enabled: !controller.sendBtnDisabled.value,
+                      style: const TextStyle(fontSize: 20),
+                      controller: controller.textController,
+                      onSubmitted: (v) {
+                        controller.sendMessage();
                       },
-                    ),
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.all(5),
-                  alignment: Alignment.bottomLeft,
-                  height: 60,
-                  color: Colors.blue,
-                  child: Row(children: [
-                    SizedBox(
-                        width: 300,
-                        child: TextField(
-                          style: const TextStyle(fontSize: 20),
-                          controller: controller.textController,
-                        )),
-                    IconButton(
-                      icon: const Icon(Icons.send),
-                      onPressed: controller.sendBtnDisabled.value
-                          ? null
-                          : () {
-                              controller.sendMessage();
-                            },
-                    )
-                  ]),
-                ),
-                // Positioned(
-                //   child: Row(children: [Text('23'), Text('444')]),
-                //   bottom: 0,
-                //   left: 0,
-                // )
-              ],
+                    )),
+                IconButton(
+                  icon: const Icon(Icons.send),
+                  onPressed: controller.sendBtnDisabled.value
+                      ? null
+                      : () {
+                          controller.sendMessage();
+                        },
+                )
+              ]),
             ),
-          )),
-    );
+          ),
+          body: Container(
+            padding: EdgeInsets.only(
+                // top: MediaQuery.of(context).padding.top,
+                bottom: MediaQuery.of(context).padding.bottom),
+            child: ListView.builder(
+              // padding: const EdgeInsets.only(top: 16, bottom: 60),
+              controller: controller.scrollController,
+              itemCount: controller.messages.value.length,
+              itemBuilder: (context, index) {
+                return controller.messages[index];
+              },
+            ),
+          ),
+        ));
   }
 }
