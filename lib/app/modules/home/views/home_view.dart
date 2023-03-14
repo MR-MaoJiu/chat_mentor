@@ -10,48 +10,100 @@ class HomeView extends GetView<HomeController> {
   Widget build(BuildContext context) {
     return Obx(() => Scaffold(
           appBar: AppBar(
-            title: const Text('Chat Mentor'),
+            title: Text(controller.title.value),
             centerTitle: true,
           ),
-          bottomSheet: SafeArea(
-            child: Container(
-              padding: const EdgeInsets.all(5),
-              alignment: Alignment.bottomLeft,
-              height: 60,
-              // color: Colors.blue,
-              child: Row(children: [
-                SizedBox(
-                    width: 300,
-                    child: TextField(
-                      enabled: !controller.sendBtnDisabled.value,
-                      style: const TextStyle(fontSize: 20),
-                      controller: controller.textController,
-                      onSubmitted: (v) {
-                        controller.sendMessage();
-                      },
-                    )),
-                IconButton(
-                  icon: const Icon(Icons.send),
-                  onPressed: controller.sendBtnDisabled.value
-                      ? null
-                      : () {
+          bottomSheet: Container(
+            margin: const EdgeInsets.all(16),
+            // color: Colors.blue,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (controller.isFirstOpen.value)
+                  Wrap(
+                    spacing: 2,
+                    children: [
+                      RawChip(
+                        label: Text('我是初级阶段'),
+                        onPressed: () {
+                          controller.textController.text = "我是初级阶段";
                           controller.sendMessage();
+                          controller.isFirstOpen.value = false;
                         },
+                      ),
+                      RawChip(
+                        label: Text('我是中级阶段'),
+                        onPressed: () {
+                          controller.textController.text = "我是中级阶段";
+                          controller.sendMessage();
+                          controller.isFirstOpen.value = false;
+                        },
+                      ),
+                      RawChip(
+                        label: Text('我是高级阶段'),
+                        onPressed: () {
+                          controller.textController.text = "我是高级阶段";
+                          controller.sendMessage();
+                          controller.isFirstOpen.value = false;
+                        },
+                      )
+                    ],
+                  ),
+                Container(
+                  padding: const EdgeInsets.only(left: 16),
+                  decoration: BoxDecoration(
+                      color: Colors.black12,
+                      borderRadius: BorderRadius.circular(16)),
+                  child: Row(
+                      // mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Expanded(
+                          flex: 8,
+                          child: TextField(
+                            enabled: !controller.sendBtnDisabled.value,
+                            textInputAction: TextInputAction.send,
+                            style: const TextStyle(fontSize: 20),
+                            controller: controller.textController,
+                            decoration: const InputDecoration(
+                                border: InputBorder.none,
+                                hintText: "说点什么练习你的英语吧！"),
+                            onSubmitted: (v) {
+                              controller.sendMessage();
+                            },
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(
+                            Icons.send,
+                            color: Colors.blue,
+                          ),
+                          onPressed: controller.sendBtnDisabled.value
+                              ? null
+                              : () {
+                                  controller.sendMessage();
+                                },
+                        )
+                      ]),
                 )
-              ]),
+              ],
             ),
           ),
-          body: Container(
-            padding: EdgeInsets.only(
-                // top: MediaQuery.of(context).padding.top,
-                bottom: MediaQuery.of(context).padding.bottom),
-            child: ListView.builder(
-              // padding: const EdgeInsets.only(top: 16, bottom: 60),
-              controller: controller.scrollController,
-              itemCount: controller.messages.value.length,
-              itemBuilder: (context, index) {
-                return controller.messages[index];
-              },
+          body: GestureDetector(
+            onTap: () {
+              FocusScope.of(context).unfocus();
+            },
+            child: Container(
+              padding: EdgeInsets.only(
+                  // top: MediaQuery.of(context).padding.top,
+                  bottom: MediaQuery.of(context).padding.bottom + 60),
+              child: ListView.builder(
+                // padding: const EdgeInsets.only(top: 16, bottom: 60),
+                controller: controller.scrollController,
+                itemCount: controller.messages.value.length,
+                itemBuilder: (context, index) {
+                  return controller.messages[index];
+                },
+              ),
             ),
           ),
         ));

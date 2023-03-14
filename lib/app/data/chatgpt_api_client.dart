@@ -49,6 +49,14 @@ class ChatGptApiClient {
     return chatGptApiResponse;
     // print("===========${}");
   }
+
+  checkVersion() {
+    dio
+        .get(
+          'https://agent-openai.ccrui.dev/dashboard/billing/credit_grants',
+        )
+        .then((value) {});
+  }
 }
 // String decodeUniconByString(String event) {
 //   var re = RegExp(

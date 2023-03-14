@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 import 'app/routes/app_pages.dart';
 import 'generated/locales.g.dart';
 
-void main() {
+void main() async {
+  await GetStorage.init();
   runApp(
     GetMaterialApp(
+      debugShowCheckedModeBanner: false,
       title: "ChatMentor",
       translationsKeys: AppTranslation.translations,
       locale: const Locale('zh', 'CN'), // 将会按照此处指定的语言翻译

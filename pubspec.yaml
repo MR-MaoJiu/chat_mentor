@@ -10,6 +10,8 @@ dependencies:
   get: 4.6.5
   dio: ^5.0.1
   chat_bubbles: ^1.4.1
+  get_storage: ^2.1.1
+  url_launcher: ^6.1.10
   flutter: 
     sdk: flutter
 
