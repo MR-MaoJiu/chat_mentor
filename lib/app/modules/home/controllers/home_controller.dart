@@ -66,11 +66,12 @@ class HomeController extends GetxController {
     ClipboardData? text = await Clipboard.getData(Clipboard.kTextPlain);
     if (text != null && (text.text ?? "").contains("sk-")) {
       key.value = text.text ?? "";
+      // print("================${key.value}");
       box.write('keys', key.value);
-      Get.showSnackbar(GetSnackBar(
-        title: "Key已更改",
-        message: "已改为：${key.value}",
-      ));
+      Get.snackbar(
+        'Key已更改',
+        "已改为：${key.value}",
+      );
     }
   }
 
@@ -89,26 +90,14 @@ class HomeController extends GetxController {
       String update = value.data['update'];
       String url = value.data['url'];
       PackageInfo.fromPlatform().then((value) {
-        Get.showSnackbar(GetSnackBar(
-          title: "有新版本啦",
-          message: "本次更新内容为：\n$update",
-          onTap: (s) {
-            if (version != value.version) {
-              launchUrl(Uri.parse(url));
-            }
-          },
-        ));
+        // print("=================$version==${value.version}");
+        if (version != value.version) {
+          Get.snackbar('有新版本啦', "本次更新内容为：\n$update", onTap: (s) {
+            launchUrl(Uri.parse(url));
+          });
+        }
       });
     });
-  }
-
-  @override
-  void onReady() {
-    super.onReady();
-  }
-
-  @override
-  void onClose() {
-    super.onClose();
+    getkey();
   }
 }
