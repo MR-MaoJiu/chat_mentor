@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../data/chatgpt_api_client.dart';
 import '../../../data/chatgpt_api_response.dart';
@@ -67,7 +69,7 @@ class HomeController extends GetxController {
       box.write('keys', key.value);
       Get.showSnackbar(GetSnackBar(
         title: "Key已更改",
-        titleText: Text("已改为：${key.value}"),
+        message: "已改为：${key.value}",
       ));
     }
   }
@@ -82,6 +84,22 @@ class HomeController extends GetxController {
         ChatGptApiRequest(
             messages: [Messages(content: command, role: 'user')],
             stop: ["我：", "老师："]));
+    client.checkVersion().then((value) {
+      String version = value.data['version'];
+      String update = value.data['update'];
+      String url = value.data['url'];
+      PackageInfo.fromPlatform().then((value) {
+        Get.showSnackbar(GetSnackBar(
+          title: "有新版本啦",
+          message: "本次更新内容为：\n$update",
+          onTap: (s) {
+            if (version != value.version) {
+              launchUrl(Uri.parse(url));
+            }
+          },
+        ));
+      });
+    });
   }
 
   @override

@@ -50,12 +50,10 @@ class ChatGptApiClient {
     // print("===========${}");
   }
 
-  checkVersion() {
-    dio
-        .get(
-          'https://agent-openai.ccrui.dev/dashboard/billing/credit_grants',
-        )
-        .then((value) {});
+  Future<Response> checkVersion() async {
+    return await dio.get(
+      'https://gitee.com/MaoJiuXianSen/chat_mentor/raw/master/version.json',
+    );
   }
 }
 // String decodeUniconByString(String event) {
