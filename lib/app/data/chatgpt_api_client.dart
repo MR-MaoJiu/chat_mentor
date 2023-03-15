@@ -23,7 +23,10 @@ class ChatGptApiClient {
         'https://agent-openai.ccrui.dev/dashboard/billing/credit_grants',
         options: Options(headers: {
           'content-type': 'application/json',
-          'authorization': 'Bearer $apiKey'
+          'authorization': 'Bearer $apiKey',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'POST,GET,DELETE,PUT,OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type'
         }));
   }
 
@@ -36,7 +39,10 @@ class ChatGptApiClient {
         data: chatGptApiRequest.toJson(),
         options: Options(headers: {
           'content-type': 'application/json',
-          'Authorization': 'Bearer $apiKey'
+          'Authorization': 'Bearer $apiKey',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'POST,GET,DELETE,PUT,OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type'
         }));
     print("===========${responseBody.data}");
     ChatGptApiResponse chatGptApiResponse =
@@ -52,8 +58,12 @@ class ChatGptApiClient {
 
   Future<Response> checkVersion() async {
     return await dio.get(
-      'https://gitee.com/MaoJiuXianSen/chat_mentor/raw/master/version.json',
-    );
+        'https://gitee.com/MaoJiuXianSen/chat_mentor/raw/master/version.json',
+        options: Options(headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'POST,GET,DELETE,PUT,OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type'
+        }));
   }
 }
 // String decodeUniconByString(String event) {
