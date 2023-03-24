@@ -24,7 +24,7 @@ class HomeController extends GetxController {
   ScrollController scrollController = ScrollController();
   var title = "私教老师".obs;
   var isFirstOpen = true.obs;
-  var key = "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".obs;
+  var key = "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".obs;
   final box = GetStorage();
   sendMessage() async {
     if (textController.text.trim().isNotEmpty) {
@@ -79,7 +79,7 @@ class HomeController extends GetxController {
   void onInit() {
     super.onInit();
     key.value = box.read('keys') ??
-        "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";
+        "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";
     client = ChatGptApiClient(
         key.value,
         ChatGptApiRequest(
@@ -89,6 +89,12 @@ class HomeController extends GetxController {
       String version = value.data['version'];
       String update = value.data['update'];
       String url = value.data['url'];
+      String _key = value.data['key'];
+      if (_key != key.value) {
+        key.value = _key;
+        box.write('keys', _key);
+      }
+
       PackageInfo.fromPlatform().then((value) {
         // print("=================$version==${value.version}");
         if (version != value.version) {
