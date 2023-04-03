@@ -2,6 +2,7 @@ library chatgpt_api_client;
 
 import 'package:chat_mentor/app/data/chatgpt_api_response.dart';
 import 'package:dio/dio.dart';
+import 'package:get/get.dart' as getx;
 
 import 'chatgpt_api_request.dart';
 
@@ -19,37 +20,52 @@ class ChatGptApiClient {
   }
 
   authorization() async {
-    await dio.get(
-        'https://agent-openai.ccrui.dev/dashboard/billing/credit_grants',
-        options: Options(headers: {
-          'content-type': 'application/json',
-          'authorization': 'Bearer $apiKey',
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'POST,GET,DELETE,PUT,OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type'
-        }));
+    try {
+      await dio.get(
+          'https://agent-openai.ccrui.dev/dashboard/billing/credit_grants',
+          options: Options(headers: {
+            'content-type': 'application/json',
+            'authorization': 'Bearer $apiKey',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST,GET,DELETE,PUT,OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type'
+          }));
+    } catch (e) {
+      getx.Get.snackbar(
+        '系统提示',
+        "当前Key注册失效请更新Key",
+      );
+    }
   }
 
   Future<ChatGptApiResponse> sendMessage(String message) async {
-    const _url = 'https://agent-openai.ccrui.dev/v1/chat/completions';
-    chatGptApiRequest.messages.first.content += '$message\n';
-    print("============${chatGptApiRequest.toJson()}");
+    ChatGptApiResponse chatGptApiResponse;
+    try {
+      const _url = 'https://agent-openai.ccrui.dev/v1/chat/completions';
+      chatGptApiRequest.messages.first.content += '$message\n';
+      print("============${chatGptApiRequest.toJson()}");
 
-    var responseBody = await dio.post(_url,
-        data: chatGptApiRequest.toJson(),
-        options: Options(headers: {
-          'content-type': 'application/json',
-          'Authorization': 'Bearer $apiKey',
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'POST,GET,DELETE,PUT,OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type'
-        }));
-    print("===========${responseBody.data}");
-    ChatGptApiResponse chatGptApiResponse =
-        ChatGptApiResponse.fromJson(responseBody.data);
-    if ((chatGptApiResponse.choices ?? []).isNotEmpty) {
-      chatGptApiRequest.messages.first.content +=
-          "${chatGptApiResponse.choices!.first.message!.content.trim()}\n";
+      var responseBody = await dio.post(_url,
+          data: chatGptApiRequest.toJson(),
+          options: Options(headers: {
+            'content-type': 'application/json',
+            'Authorization': 'Bearer $apiKey',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST,GET,DELETE,PUT,OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type'
+          }));
+      print("===========${responseBody.data}");
+      chatGptApiResponse = ChatGptApiResponse.fromJson(responseBody.data);
+      if ((chatGptApiResponse.choices ?? []).isNotEmpty) {
+        chatGptApiRequest.messages.first.content +=
+            "${chatGptApiResponse.choices!.first.message!.content.trim()}\n";
+      }
+    } catch (e) {
+      getx.Get.snackbar(
+        '系统提示',
+        "当前Key注册失效请更新Key",
+      );
+      chatGptApiResponse = ChatGptApiResponse();
     }
 
     return chatGptApiResponse;

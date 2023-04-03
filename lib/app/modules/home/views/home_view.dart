@@ -12,6 +12,19 @@ class HomeView extends GetView<HomeController> {
           appBar: AppBar(
             title: Text(controller.title.value),
             centerTitle: true,
+            actions: [
+              IconButton(
+                  onPressed: () {
+                    // controller.sendBtnDisabled.value = false;
+                    controller.isFirstOpen.value = true;
+                    controller.messages.value.clear();
+                    controller.title.value = "私教老师";
+                  },
+                  icon: const Icon(
+                    Icons.refresh,
+                    color: Colors.white,
+                  ))
+            ],
           ),
           bottomSheet: Container(
             margin: const EdgeInsets.all(16),
@@ -24,7 +37,7 @@ class HomeView extends GetView<HomeController> {
                     spacing: 2,
                     children: [
                       RawChip(
-                        label: Text('我是初级阶段'),
+                        label: const Text('我是初级阶段'),
                         onPressed: () {
                           controller.textController.text = "我是初级阶段";
                           controller.sendMessage();
@@ -32,7 +45,7 @@ class HomeView extends GetView<HomeController> {
                         },
                       ),
                       RawChip(
-                        label: Text('我是中级阶段'),
+                        label: const Text('我是中级阶段'),
                         onPressed: () {
                           controller.textController.text = "我是中级阶段";
                           controller.sendMessage();
@@ -40,7 +53,7 @@ class HomeView extends GetView<HomeController> {
                         },
                       ),
                       RawChip(
-                        label: Text('我是高级阶段'),
+                        label: const Text('我是高级阶段'),
                         onPressed: () {
                           controller.textController.text = "我是高级阶段";
                           controller.sendMessage();

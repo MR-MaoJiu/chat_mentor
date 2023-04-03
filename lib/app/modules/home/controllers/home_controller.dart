@@ -47,6 +47,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
       title.value = "对方正在输入中...";
       chatGptApiResponse.value = await client.sendMessage(_msg);
       sendBtnDisabled.value = false;
+      title.value = "私教老师";
       if ((chatGptApiResponse.value.choices ?? []).isNotEmpty) {
         messages.value.add(BubbleSpecialThree(
           text:
@@ -54,7 +55,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
           color: const Color(0xFFE8E8EE),
           isSender: false,
         ));
-        title.value = "私教老师";
+
         Future.delayed(const Duration(milliseconds: 20), () {
           scrollController.jumpTo(
             scrollController.position.maxScrollExtent,
@@ -97,6 +98,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
                 CupertinoDialogAction(
                   child: const Text("下次一定"),
                   onPressed: () {
+                    Clipboard.setData(const ClipboardData());
                     Get.back();
                   },
                 ),
