@@ -69,29 +69,40 @@ class HomeController extends GetxController with WidgetsBindingObserver {
     if (text != null && (text.text ?? "").contains("sk-")) {
       key.value = text.text ?? "";
       // print("================${key.value}");
-
-      CupertinoAlertDialog(
-        content: const Text("发现网络最新的key和当前的key不匹配是否使用网络key"),
-        actions: <Widget>[
-          CupertinoDialogAction(
-            child: const Text("立马替换"),
-            onPressed: () {
-              box.write('keys', key.value);
-              box.write('keyVersion', keyVersion.value += 0.1);
-              Get.snackbar(
-                'Key已更改',
-                "已改为：${key.value},key版本号：${keyVersion.value}",
-              );
-            },
-          ),
-          CupertinoDialogAction(
-            child: const Text("下次一定"),
-            onPressed: () {
-              Get.back();
-            },
-          ),
-        ],
-      );
+      showCupertinoDialog(
+          context: Get.context!,
+          builder: (BuildContext context) {
+            return CupertinoAlertDialog(
+              content: const Text("发现粘贴板的key和当前的key不匹配是否使用粘贴板key"),
+              actions: <Widget>[
+                CupertinoDialogAction(
+                  child: const Text("立马替换"),
+                  onPressed: () {
+                    box.write('keys', key.value);
+                    box.write('keyVersion', keyVersion.value += 0.1);
+                    Get.snackbar(
+                      'Key已更改',
+                      "已改为：${key.value},key版本号：${keyVersion.value}",
+                    );
+                    client = ChatGptApiClient(
+                        key.value,
+                        ChatGptApiRequest(messages: [
+                          Messages(content: command, role: 'user')
+                        ], stop: [
+                          "我：",
+                          "老师："
+                        ]));
+                  },
+                ),
+                CupertinoDialogAction(
+                  child: const Text("下次一定"),
+                  onPressed: () {
+                    Get.back();
+                  },
+                ),
+              ],
+            );
+          });
     }
   }
 
@@ -114,25 +125,41 @@ class HomeController extends GetxController with WidgetsBindingObserver {
       double _keyVersion = value.data['keyVersion'] ?? 1.0;
       print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>$_key");
       if (_keyVersion > keyVersion.value) {
-        CupertinoAlertDialog(
-          content: const Text("发现网络最新的key和当前的key不匹配是否使用网络key"),
-          actions: <Widget>[
-            CupertinoDialogAction(
-              child: const Text("立马替换"),
-              onPressed: () {
-                key.value = _key;
-                box.write('keys', _key);
-                box.write('keyVersion', _keyVersion);
-              },
-            ),
-            CupertinoDialogAction(
-              child: const Text("下次一定"),
-              onPressed: () {
-                Get.back();
-              },
-            ),
-          ],
-        );
+        showCupertinoDialog(
+            context: Get.context!,
+            builder: (BuildContext context) {
+              return CupertinoAlertDialog(
+                content: const Text("发现网络最新的key和当前的key不匹配是否使用网络key"),
+                actions: <Widget>[
+                  CupertinoDialogAction(
+                    child: const Text("立马替换"),
+                    onPressed: () {
+                      key.value = _key;
+                      box.write('keys', _key);
+                      box.write('keyVersion', _keyVersion);
+                      Get.snackbar(
+                        'Key已更改',
+                        "已改为：${key.value},key版本号：${keyVersion.value}",
+                      );
+                      client = ChatGptApiClient(
+                          key.value,
+                          ChatGptApiRequest(messages: [
+                            Messages(content: command, role: 'user')
+                          ], stop: [
+                            "我：",
+                            "老师："
+                          ]));
+                    },
+                  ),
+                  CupertinoDialogAction(
+                    child: const Text("下次一定"),
+                    onPressed: () {
+                      Get.back();
+                    },
+                  ),
+                ],
+              );
+            });
       }
 
       PackageInfo.fromPlatform().then((value) {
@@ -144,7 +171,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
         }
       });
     });
-    getkey();
+    // getkey();
     WidgetsBinding.instance.addObserver(this);
   }
 
