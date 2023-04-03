@@ -1,5 +1,6 @@
 import 'package:chat_bubbles/bubbles/bubble_special_three.dart';
 import 'package:chat_mentor/app/data/chatgpt_api_request.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -10,7 +11,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../data/chatgpt_api_client.dart';
 import '../../../data/chatgpt_api_response.dart';
 
-class HomeController extends GetxController {
+class HomeController extends GetxController with WidgetsBindingObserver {
   var sendBtnDisabled = true.obs;
   var chatGptApiResponse = ChatGptApiResponse().obs;
   var messages = <Widget>[].obs;
@@ -24,7 +25,8 @@ class HomeController extends GetxController {
   ScrollController scrollController = ScrollController();
   var title = "私教老师".obs;
   var isFirstOpen = true.obs;
-  var key = "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".obs;
+  var key = "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".obs;
+  var keyVersion = 1.0.obs;
   final box = GetStorage();
   sendMessage() async {
     if (textController.text.trim().isNotEmpty) {
@@ -67,10 +69,28 @@ class HomeController extends GetxController {
     if (text != null && (text.text ?? "").contains("sk-")) {
       key.value = text.text ?? "";
       // print("================${key.value}");
-      box.write('keys', key.value);
-      Get.snackbar(
-        'Key已更改',
-        "已改为：${key.value}",
+
+      CupertinoAlertDialog(
+        content: const Text("发现网络最新的key和当前的key不匹配是否使用网络key"),
+        actions: <Widget>[
+          CupertinoDialogAction(
+            child: const Text("立马替换"),
+            onPressed: () {
+              box.write('keys', key.value);
+              box.write('keyVersion', keyVersion.value += 0.1);
+              Get.snackbar(
+                'Key已更改',
+                "已改为：${key.value},key版本号：${keyVersion.value}",
+              );
+            },
+          ),
+          CupertinoDialogAction(
+            child: const Text("下次一定"),
+            onPressed: () {
+              Get.back();
+            },
+          ),
+        ],
       );
     }
   }
@@ -80,6 +100,7 @@ class HomeController extends GetxController {
     super.onInit();
     key.value = box.read('keys') ??
         "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";
+    keyVersion.value = box.read('keyVersion') ?? 1.0;
     client = ChatGptApiClient(
         key.value,
         ChatGptApiRequest(
@@ -90,9 +111,28 @@ class HomeController extends GetxController {
       String update = value.data['update'];
       String url = value.data['url'];
       String _key = value.data['key'];
-      if (_key != key.value) {
-        key.value = _key;
-        box.write('keys', _key);
+      double _keyVersion = value.data['keyVersion'] ?? 1.0;
+      print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>$_key");
+      if (_keyVersion > keyVersion.value) {
+        CupertinoAlertDialog(
+          content: const Text("发现网络最新的key和当前的key不匹配是否使用网络key"),
+          actions: <Widget>[
+            CupertinoDialogAction(
+              child: const Text("立马替换"),
+              onPressed: () {
+                key.value = _key;
+                box.write('keys', _key);
+                box.write('keyVersion', _keyVersion);
+              },
+            ),
+            CupertinoDialogAction(
+              child: const Text("下次一定"),
+              onPressed: () {
+                Get.back();
+              },
+            ),
+          ],
+        );
       }
 
       PackageInfo.fromPlatform().then((value) {
@@ -105,5 +145,22 @@ class HomeController extends GetxController {
       });
     });
     getkey();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed) {
+      // 应用进入前台
+      getkey();
+    }
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    WidgetsBinding.instance.removeObserver(this);
   }
 }
