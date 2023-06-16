@@ -1,3 +1,4 @@
+import 'package:chat_mentor/app/modules/home/views/personal_card.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -16,9 +17,10 @@ class HomeView extends GetView<HomeController> {
               IconButton(
                   onPressed: () {
                     // controller.sendBtnDisabled.value = false;
-                    controller.isFirstOpen.value = true;
-                    controller.messages.value.clear();
-                    controller.title.value = "私教老师";
+                    // controller.isFirstOpen.value = true;
+                    // controller.messages.value.clear();
+                    // controller.title.value = "私教老师";
+                    Get.to(() => const PersonalCard());
                   },
                   icon: const Icon(
                     Icons.refresh,

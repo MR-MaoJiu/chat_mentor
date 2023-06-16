@@ -15,6 +15,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
   var sendBtnDisabled = true.obs;
   var chatGptApiResponse = ChatGptApiResponse().obs;
   var messages = <Widget>[].obs;
+  var index = 0.obs;
   String command = "你是英语外教，请确定学生英语等级后回使用相应的等级使用英语回答学生问题并纠正学生语法错误：";
   // "你是英语老师禁止说与英语无关的事情,确定学生等级后开始给学生出一天选择题，学生答对后继续下一题，否则跟学生讲解一下继续出下一题：";
   // "你是英语老师禁止说与英语无关的事情，先询问英语等级调整相关教学方案，初学者可以先中文教学，禁止说多余的话：";
@@ -28,6 +29,7 @@ class HomeController extends GetxController with WidgetsBindingObserver {
   var key = "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".obs;
   var keyVersion = 1.0.obs;
   final box = GetStorage();
+
   sendMessage() async {
     if (textController.text.trim().isNotEmpty) {
       sendBtnDisabled.value = true;
